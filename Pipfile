@@ -12,12 +12,13 @@ bandit = "*"
 black = "*"
 coverage = "*"
 coveralls = "*"
+freezegun = "*"
 mypy = "*"
 pylama = {extras = ["all"], version = "*"}
 pytest = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.11"
 
 [scripts]
-my_app = "python -c \"from my_app.cli import main; main()\""
+cc-slips = "python -c \"from cc_slips.cli import main; main()\""

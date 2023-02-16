@@ -4,20 +4,23 @@ import os
 import sentry_sdk
 
 
-def configure_logger(logger: logging.Logger, verbose: bool) -> str:
-    if verbose:
+def configure_logger(logger: logging.Logger, log_level_string: str) -> str:
+    if log_level_string.upper() not in logging.getLevelNamesMapping():
+        raise ValueError(f"'{log_level_string}' is not a valid Python logging level")
+    log_level = logging.getLevelName(log_level_string.upper())
+    if log_level < 20:
         logging.basicConfig(
             format="%(asctime)s %(levelname)s %(name)s.%(funcName)s() line %(lineno)d: "
             "%(message)s"
         )
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(log_level)
         for handler in logging.root.handlers:
-            handler.addFilter(logging.Filter("my_app"))
+            handler.addFilter(logging.Filter("cc_slips"))
     else:
         logging.basicConfig(
             format="%(asctime)s %(levelname)s %(name)s.%(funcName)s(): %(message)s"
         )
-        logger.setLevel(logging.INFO)
+        logger.setLevel(log_level)
     return (
         f"Logger '{logger.name}' configured with level="
         f"{logging.getLevelName(logger.getEffectiveLevel())}"
