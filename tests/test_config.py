@@ -1,18 +1,27 @@
 import logging
 
-from my_app.config import configure_logger, configure_sentry
+import pytest
+
+from ccslips.config import configure_logger, configure_sentry
 
 
-def test_configure_logger_not_verbose():
+def test_configure_logger_with_invalid_level_raises_error():
     logger = logging.getLogger(__name__)
-    result = configure_logger(logger, verbose=False)
+    with pytest.raises(ValueError) as error:
+        configure_logger(logger, log_level_string="oops")
+    assert "'oops' is not a valid Python logging level" in str(error)
+
+
+def test_configure_logger_info_level_or_higher():
+    logger = logging.getLogger(__name__)
+    result = configure_logger(logger, log_level_string="info")
     assert logger.getEffectiveLevel() == 20
     assert result == "Logger 'tests.test_config' configured with level=INFO"
 
 
-def test_configure_logger_verbose():
+def test_configure_logger_debug_level_or_lower():
     logger = logging.getLogger(__name__)
-    result = configure_logger(logger, verbose=True)
+    result = configure_logger(logger, log_level_string="DEBUG")
     assert logger.getEffectiveLevel() == 10
     assert result == "Logger 'tests.test_config' configured with level=DEBUG"
 
