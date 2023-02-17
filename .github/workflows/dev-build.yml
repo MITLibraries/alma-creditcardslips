@@ -14,7 +14,7 @@ on:
 jobs:
   deploy:
     name: Dev Container Deploy
-    uses: mitlibraries/.github/.github/workflows/ecr-shared-deploy-dev.yml@main
+    uses: mitlibraries/.github/.github/workflows/ecr-shared-deploy-dev.yml@IN-735
     secrets: inherit
     with:
       AWS_REGION: "us-east-1"
