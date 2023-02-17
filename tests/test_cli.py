@@ -1,6 +1,6 @@
 from freezegun import freeze_time
 
-from cc_slips.cli import main
+from ccslips.cli import main
 
 
 @freeze_time("2023-01-02")

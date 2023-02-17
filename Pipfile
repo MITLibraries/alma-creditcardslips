@@ -21,4 +21,4 @@ pytest = "*"
 python_version = "3.11"
 
 [scripts]
-cc-slips = "python -c \"from cc_slips.cli import main; main()\""
+ccslips = "python -c \"from ccslips.cli import main; main()\""

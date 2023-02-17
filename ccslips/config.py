@@ -15,7 +15,7 @@ def configure_logger(logger: logging.Logger, log_level_string: str) -> str:
         )
         logger.setLevel(log_level)
         for handler in logging.root.handlers:
-            handler.addFilter(logging.Filter("cc_slips"))
+            handler.addFilter(logging.Filter("ccslips"))
     else:
         logging.basicConfig(
             format="%(asctime)s %(levelname)s %(name)s.%(funcName)s(): %(message)s"

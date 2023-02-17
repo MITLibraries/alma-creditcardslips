@@ -20,7 +20,7 @@ update: install ## Update all Python dependencies
 ### Test commands ###
 
 test: ## Run tests and print a coverage report
-	pipenv run coverage run --source=cc_slips -m pytest -vv
+	pipenv run coverage run --source=ccslips -m pytest -vv
 	pipenv run coverage report -m
 
 coveralls: test
@@ -31,13 +31,13 @@ coveralls: test
 lint: bandit black mypy pylama safety ## Run linting, code quality, and safety checks
 
 bandit:
-	pipenv run bandit -r cc_slips
+	pipenv run bandit -r ccslips
 
 black:
 	pipenv run black --check --diff .
 
 mypy:
-	pipenv run mypy cc_slips
+	pipenv run mypy ccslips
 
 pylama:
 	pipenv run pylama --options setup.cfg

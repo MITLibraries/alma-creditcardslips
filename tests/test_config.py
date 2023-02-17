@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-from cc_slips.config import configure_logger, configure_sentry
+from ccslips.config import configure_logger, configure_sentry
 
 
 def test_configure_logger_with_invalid_level_raises_error():

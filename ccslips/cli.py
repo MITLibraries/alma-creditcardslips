@@ -5,7 +5,7 @@ from typing import Optional
 
 import click
 
-from cc_slips.config import configure_logger, configure_sentry
+from ccslips.config import configure_logger, configure_sentry
 
 logger = logging.getLogger(__name__)
 
