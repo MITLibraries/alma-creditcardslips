@@ -28,9 +28,17 @@ def configure_logger(logger: logging.Logger, log_level_string: str) -> str:
 
 
 def configure_sentry() -> str:
-    env = os.getenv("WORKSPACE")
+    env = os.environ["WORKSPACE"]
     sentry_dsn = os.getenv("SENTRY_DSN")
     if sentry_dsn and sentry_dsn.lower() != "none":
         sentry_sdk.init(sentry_dsn, environment=env)
         return f"Sentry DSN found, exceptions will be sent to Sentry with env={env}"
     return "No Sentry DSN found, exceptions will not be sent to Sentry"
+
+
+def load_alma_config() -> dict[str, str]:
+    return {
+        "API_KEY": os.environ["ALMA_API_READ_KEY"],
+        "BASE_URL": os.environ["ALMA_API_URL"],
+        "TIMEOUT": os.getenv("ALMA_API_TIMEOUT", "30"),
+    }

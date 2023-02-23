@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 click = "*"
+requests = "*"
 sentry-sdk = "*"
 
 [dev-packages]
@@ -16,6 +17,8 @@ freezegun = "*"
 mypy = "*"
 pylama = {extras = ["all"], version = "*"}
 pytest = "*"
+requests-mock = "*"
+types-requests = "*"
 
 [requires]
 python_version = "3.11"
