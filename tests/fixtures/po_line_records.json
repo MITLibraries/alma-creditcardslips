@@ -1,0 +1,23 @@
+{
+    "all_fields": {
+        "acquisition_method": {
+            "desc": "Credit Card"
+        },
+        "created_date": "2023-01-02Z",
+        "number": "POL-all-fields"
+    },
+    "other_acq_method": {
+        "acquisition_method": {
+            "desc": "Something else"
+        },
+        "created_date": "2023-01-02Z",
+        "number": "POL-other-acq-method"
+    },
+    "wrong_date": {
+        "acquisition_method": {
+            "desc": "Credit Card"
+        },
+        "created_date": "2023-12-11Z",
+        "number": "POL-wrong-date"
+    }
+}
