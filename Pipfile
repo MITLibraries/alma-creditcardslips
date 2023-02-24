@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+boto3 = "*"
 click = "*"
 requests = "*"
 sentry-sdk = "*"
@@ -11,9 +12,11 @@ sentry-sdk = "*"
 [dev-packages]
 bandit = "*"
 black = "*"
+boto3-stubs = "*"
 coverage = "*"
 coveralls = "*"
 freezegun = "*"
+moto = "*"
 mypy = "*"
 pylama = {extras = ["all"], version = "*"}
 pytest = "*"

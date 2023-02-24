@@ -1,14 +1,16 @@
 import json
 import os
 
+import boto3
 import pytest
 import requests_mock
 from click.testing import CliRunner
+from moto import mock_ses
 
 from ccslips.alma import AlmaClient
 
 
-# Env fixture
+# Env fixtures
 @pytest.fixture(autouse=True)
 def test_env():
     os.environ = {
@@ -19,6 +21,14 @@ def test_env():
         "WORKSPACE": "test",
     }
     yield
+
+
+@pytest.fixture(autouse=True)
+def aws_credentials():
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_SECURITY_TOKEN"] = "testing"
+    os.environ["AWS_SESSION_TOKEN"] = "testing"
 
 
 # CLI fixture
@@ -108,3 +118,12 @@ def mocked_alma(fund_records, po_line_records):
         )
 
         yield mocker
+
+
+# AWS fixtures
+@pytest.fixture(autouse=True)
+def mocked_ses():
+    with mock_ses():
+        ses = boto3.client("ses", region_name="us-east-1")
+        ses.verify_email_identity(EmailAddress="from@example.com")
+        yield ses
