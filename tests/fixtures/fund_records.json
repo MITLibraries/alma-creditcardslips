@@ -1,5 +1,13 @@
 {
   "abc": {
-    "code": "FUND-abc"
+    "code": "FUND-abc",
+    "external_id": "account-abc"
+  },
+  "def": {
+    "code": "FUND-def",
+    "external_id": "account-def"
+  },
+  "no-external-id": {
+    "code": "FUND-no-external-id"
   }
 }

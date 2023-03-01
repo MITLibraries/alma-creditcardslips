@@ -29,16 +29,26 @@ def test_get_brief_po_lines_without_acquisition_method(alma_client):
 
 def test_get_brief_po_lines_with_acquisition_method(alma_client):
     result = list(alma_client.get_brief_po_lines("PURCHASE_NOLETTER"))
-    assert len(result) == 2
+    assert len(result) == 3
     assert result[0]["number"] == "POL-all-fields"
-    assert result[1]["number"] == "POL-wrong-date"
+    assert result[1]["number"] == "POL-missing-fields"
+    assert result[2]["number"] == "POL-wrong-date"
 
 
 def test_get_full_po_line(alma_client):
     assert alma_client.get_full_po_line("POL-all-fields") == {
         "acquisition_method": {"desc": "Credit Card"},
         "created_date": "2023-01-02Z",
+        "fund_distribution": [
+            {"fund_code": {"value": "FUND-abc"}, "amount": {"sum": "7"}},
+            {"fund_code": {"value": "FUND-def"}, "amount": {"sum": "5.0"}},
+        ],
+        "location": [{"quantity": 1}, {"quantity": 2}],
+        "note": [{"note_text": "CC-cardholder name"}],
         "number": "POL-all-fields",
+        "price": {"sum": "12.0"},
+        "resource_metadata": {"title": "Book title"},
+        "vendor_account": "Corporation",
     }
 
 
@@ -54,8 +64,9 @@ def test_get_full_po_lines_with_parameters(alma_client):
             acquisition_method="PURCHASE_NOLETTER", date="2023-01-02"
         )
     )
-    assert len(result) == 1
+    assert len(result) == 2
     assert result[0]["number"] == "POL-all-fields"
+    assert result[1]["number"] == "POL-missing-fields"
 
 
 def test_alma_get_fund_by_code(alma_client):
