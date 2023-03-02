@@ -17,6 +17,8 @@ def test_env():
         "ALMA_API_URL": "https://example.com",
         "ALMA_API_READ_KEY": "just-for-testing",
         "ALMA_API_TIMEOUT": "10",
+        "SES_SEND_FROM_EMAIL": "from@example.com",
+        "SES_RECIPIENT_EMAIL": "recipient1@example.com recipient2@example.com",
         "SENTRY_DSN": "None",
         "WORKSPACE": "test",
     }
@@ -82,6 +84,18 @@ def mocked_alma(fund_records, po_line_records):
             "https://example.com/acq/funds?q=fund_code~FUND-abc",
             json={"fund": [fund_records["abc"]], "total_record_count": 1},
         )
+        mocker.get(
+            "https://example.com/acq/funds?q=fund_code~FUND-def",
+            json={"fund": [fund_records["def"]], "total_record_count": 1},
+        )
+        mocker.get(
+            "https://example.com/acq/funds?q=fund_code~FUND-no-external-id",
+            json={"fund": [fund_records["no-external-id"]], "total_record_count": 1},
+        )
+        mocker.get(
+            "https://example.com/acq/funds?q=fund_code~FUND-nothing-here",
+            json={"total_record_count": 0},
+        )
 
         # PO Line endpoints
         mocker.get(
@@ -99,14 +113,19 @@ def mocked_alma(fund_records, po_line_records):
             json={
                 "po_line": [
                     po_line_records["all_fields"],
+                    po_line_records["missing_fields"],
                     po_line_records["wrong_date"],
                 ],
-                "total_record_count": 2,
+                "total_record_count": 3,
             },
         )
         mocker.get(
             "https://example.com/acq/po-lines/POL-all-fields",
             json=po_line_records["all_fields"],
+        )
+        mocker.get(
+            "https://example.com/acq/po-lines/POL-missing-fields",
+            json=po_line_records["missing_fields"],
         )
         mocker.get(
             "https://example.com/acq/po-lines/POL-other-acq-method",

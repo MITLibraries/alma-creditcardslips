@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime, timedelta
 from time import perf_counter
 from typing import Optional
@@ -6,6 +7,8 @@ from typing import Optional
 import click
 
 from ccslips.config import configure_logger, configure_sentry
+from ccslips.email import Email
+from ccslips.polines import generate_credit_card_slips_html, process_po_lines
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +17,20 @@ logger = logging.getLogger(__name__)
 @click.option(
     "-s",
     "--source-email",
+    envvar="SES_SEND_FROM_EMAIL",
     required=True,
     help="The email address sending the credit card slips.",
 )
 @click.option(
     "-r",
     "--recipient-email",
+    envvar="SES_RECIPIENT_EMAIL",
     required=True,
     multiple=True,
-    help="The email address receiving the credit card slips. Repeatable",
+    help="The email address(es) receiving the credit card slips. Repeatable, e.g. "
+    "`-r recipient1@example.com -r recipient2@example.com`. If setting via ENV "
+    "variable, separate multiple email addresses with a space, e.g. "
+    "`SES_RECIPIENT_EMAIL=recipient1@example.com recipient2@example.com`",
 )
 @click.option(
     "-d",
@@ -55,17 +63,32 @@ def main(
     logger.debug("Command called with options: %s", ctx.params)
 
     logger.info("Starting credit card slips process")
-
-    # Do things here!
     date = date or (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
-    click.echo(
-        f"\nFunctionality to be added here will process the credit card invoices from "
-        f"date {date} and send the resulting email from {source_email} to "
-        f"{recipient_email}\n"
+    credit_card_slips_data = process_po_lines(date)
+    email_content = generate_credit_card_slips_html(credit_card_slips_data)
+    email = Email()
+    env = os.environ["WORKSPACE"]
+    subject_prefix = f"{env.upper()} " if env != "prod" else ""
+    email.populate(
+        from_address=source_email,
+        to_addresses=",".join(recipient_email),
+        subject=f"{subject_prefix}Credit card slips {date}",
+        attachments=[
+            {
+                "content": email_content,
+                "filename": f"{date}_credit_card_slips.htm",
+            }
+        ],
     )
+    response = email.send()
+    logger.debug(response)
 
     elapsed_time = perf_counter() - start_time
     logger.info(
-        "Finished! Total time to complete process: %s",
+        "Credit card slips processing complete for date %s. Email sent to recipient(s) "
+        "%s with SES message ID '%s'. Total time to complete process: %s",
+        date,
+        recipient_email,
+        response["MessageId"],
         str(timedelta(seconds=elapsed_time)),
     )

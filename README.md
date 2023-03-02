@@ -21,3 +21,5 @@ A CLI application to generate and email credit card slips for Alma invoices via 
 - `ALMA_API_TIMEOUT`: Request timeout for Alma API calls. Defaults to 30 seconds if not set.
 - `LOG_LEVEL`: Set to a valid Python logging level (e.g. `DEBUG`, case-insensitive) if desired. Can also be passed as an option directly to the ccslips command. Defaults to `INFO` if not set or passed to the command.
 - `SENTRY_DSN`: If set to a valid Sentry DSN enables Sentry exception monitoring. This is not needed for local development.
+- `SES_RECIPIENT_EMAIL`: Email address(es) for recipient(s) who should receive the credit card slips email. Multiple email addresses should be separated by a space, e.g. `SES_RECIPIENT_EMAIL=recipient1@example.com recipient2@example.com`. This value can either be set in ENV or passed directly to the command line as an option.
+- `SES_SEND_FROM_EMAIL`: Verified email address for sending emails via SES. This value can either be set in ENV or passed directly to the command as an option.
