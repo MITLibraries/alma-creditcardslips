@@ -3,7 +3,7 @@ from freezegun import freeze_time
 from ccslips.cli import main
 
 
-@freeze_time("2023-01-03")
+@freeze_time("2023-01-04")
 def test_cli_options_from_env(caplog, runner):
     result = runner.invoke(main)
     assert result.exit_code == 0
