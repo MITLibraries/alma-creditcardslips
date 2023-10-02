@@ -2,6 +2,18 @@
 
 A CLI application to generate and email credit card slips for Alma invoices via the Alma API.
 
+## Description
+Credit card slips are generated for items purchased with a credit card (e.g. from vendors like Amazon), which means we prepay rather than receive an invoice after shipment, which is our workflow with most vendors. The credit card slip is in lieu of a vendor-generated invoice, and is used for processing by Acquisition staff.
+
+ The application runs daily and retrieves PO lines with:
+* `status=ACTIVE`
+* `acquisition_method=PURCHASE_NOLETTER` (`Credit card` in the Alma UI)
+* A note that begins with `CC-`
+
+The application is scheduled to run each day as an Elastic Container Service (ECS) task. By default, it retrieves PO lines from 2 days before the date the application is run. Originally, it was set for 1 day before the application is run but a bug was discovered in August 2023 that required a change to 2 days before in order to get the expected output. 
+
+The application fills in a template with the PO line data and the resulting file is emailed as an attachment to the necessary stakeholders. Acquisitions staff print out the attachment, mark it up, and complete recording the payment in Alma. 
+
 ## Development
 
 - To install with dev dependencies: `make install`
