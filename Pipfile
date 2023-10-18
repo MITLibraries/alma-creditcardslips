@@ -22,9 +22,10 @@ pylama = {extras = ["all"], version = "*"}
 pytest = "*"
 requests-mock = "*"
 types-requests = "*"
+setuptools = "*"
 
 [requires]
-python_version = "3.11"
+python_version = "3.12"
 
 [scripts]
 ccslips = "python -c \"from ccslips.cli import main; main()\""
