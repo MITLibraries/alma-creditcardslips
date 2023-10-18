@@ -5,7 +5,7 @@ A CLI application to generate and email credit card slips for Alma invoices via 
 ## Description
 Credit card slips are generated for items purchased with a credit card (e.g. from vendors like Amazon), which means we prepay rather than receive an invoice after shipment, which is our workflow with most vendors. The credit card slip is in lieu of a vendor-generated invoice, and is used for processing by Acquisition staff.
 
- The application runs daily and retrieves PO lines with:
+ The application runs daily and retrieves purchase order (PO) lines from the Alma REST API with the following criteria:
 * `status=ACTIVE`
 * `acquisition_method=PURCHASE_NOLETTER` (`Credit card` in the Alma UI)
 * A note that begins with `CC-`
