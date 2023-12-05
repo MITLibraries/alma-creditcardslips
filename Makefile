@@ -8,6 +8,10 @@ ECR_URL_DEV:=222053980223.dkr.ecr.us-east-1.amazonaws.com/alma-creditcardslips-d
 SHELL=/bin/bash
 DATETIME:=$(shell date -u +%Y%m%dT%H%M%SZ)
 
+help: ## Print this message
+	@awk 'BEGIN { FS = ":.*##"; print "Usage:  make <target>\n\nTargets:" } \
+/^[-_[:alpha:]]+:.?*##/ { printf "  %-15s%s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+
 ### Dependency commands ###
 
 install: ## Install dependencies and CLI app
@@ -28,24 +32,30 @@ coveralls: test
 
 ### Code quality and safety commands ###
 
-lint: bandit black mypy pylama safety ## Run linting, code quality, and safety checks
-
-bandit:
-	pipenv run bandit -r ccslips
+# linting commands
+lint: black mypy ruff safety 
 
 black:
 	pipenv run black --check --diff .
 
 mypy:
-	pipenv run mypy ccslips
+	pipenv run mypy .
 
-pylama:
-	pipenv run pylama --options setup.cfg
+ruff:
+	pipenv run ruff check .
 
 safety:
 	pipenv check
 	pipenv verify
 
+# apply changes to resolve any linting errors
+lint-apply: black-apply ruff-apply
+
+black-apply: 
+	pipenv run black .
+
+ruff-apply: 
+	pipenv run ruff check --fix .
 
 ### Terraform-generated Developer Deploy Commands for Dev environment ###
 dist-dev: ## Build docker container (intended for developer-based manual build)

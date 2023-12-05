@@ -10,7 +10,6 @@ requests = "*"
 sentry-sdk = "*"
 
 [dev-packages]
-bandit = "*"
 black = "*"
 boto3-stubs = "*"
 coverage = "*"
@@ -18,9 +17,11 @@ coveralls = "*"
 freezegun = "*"
 moto = "*"
 mypy = "*"
-pylama = {extras = ["all"], version = "*"}
+pre-commit = "*"
 pytest = "*"
 requests-mock = "*"
+ruff = "*"
+safety = "*"
 types-requests = "*"
 
 [requires]
