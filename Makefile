@@ -93,3 +93,6 @@ publish-stage: ## Only use in an emergency
 ### If this is a Lambda repo, uncomment the two lines below     ###
 # update-lambda-stage: ## Updates the lambda with whatever is the most recent image in the ecr (intended for developer-based manual update)
 #	aws lambda update-function-code --function-name $(FUNCTION_STAGE) --image-uri $(ECR_URL_STAGE):latest
+
+run-dev: # Run in dev against Alma sandbox
+	aws ecs run-task --cluster alma-integrations-creditcardslips-ecs-dev --task-definition alma-integrations-creditcardslips-ecs-dev --launch-type="FARGATE" --network-configuration '{ "awsvpcConfiguration": {"subnets": ["subnet-0488e4996ddc8365b", "subnet-022e9ea19f5f93e65"],"securityGroups": ["sg-095372030a26c7753"],"assignPublicIp": "DISABLED"}}'
