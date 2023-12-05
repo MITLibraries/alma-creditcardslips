@@ -1,5 +1,4 @@
 import json
-import os
 
 import boto3
 import pytest
@@ -12,29 +11,24 @@ from ccslips.alma import AlmaClient
 
 # Env fixtures
 @pytest.fixture(autouse=True)
-def test_env():
-    os.environ = {
-        "ALMA_API_URL": "https://example.com",
-        "ALMA_API_READ_KEY": "just-for-testing",
-        "ALMA_API_TIMEOUT": "10",
-        "SES_SEND_FROM_EMAIL": "from@example.com",
-        "SES_RECIPIENT_EMAIL": "recipient1@example.com recipient2@example.com",
-        "SENTRY_DSN": "None",
-        "WORKSPACE": "test",
-    }
-    yield
-
-
-@pytest.fixture(autouse=True)
-def aws_credentials():
-    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-    os.environ["AWS_SECURITY_TOKEN"] = "testing"
-    os.environ["AWS_SESSION_TOKEN"] = "testing"
+def _test_environment(monkeypatch):
+    monkeypatch.setenv("ALMA_API_URL", "https://example.com")
+    monkeypatch.setenv("ALMA_API_READ_KEY", "just-for-testing")
+    monkeypatch.setenv("ALMA_API_TIMEOUT", "10")
+    monkeypatch.setenv("SES_SEND_FROM_EMAIL", "from@example.com")
+    monkeypatch.setenv(
+        "SES_RECIPIENT_EMAIL", "recipient1@example.com recipient2@example.com"
+    )
+    monkeypatch.setenv("SENTRY_DSN", "None")
+    monkeypatch.setenv("WORKSPACE", "test")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "testing")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "testing")
+    monkeypatch.setenv("AWS_SECURITY_TOKEN", "testing")
+    monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
 
 
 # CLI fixture
-@pytest.fixture()
+@pytest.fixture
 def runner():
     return CliRunner()
 
@@ -53,7 +47,7 @@ def po_line_records_fixture():
 
 
 # API fixtures
-@pytest.fixture()
+@pytest.fixture
 def alma_client():
     return AlmaClient()
 

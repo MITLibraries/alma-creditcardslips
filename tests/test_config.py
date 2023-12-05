@@ -7,22 +7,21 @@ from ccslips.config import configure_logger, configure_sentry, load_alma_config
 
 def test_configure_logger_with_invalid_level_raises_error():
     logger = logging.getLogger(__name__)
-    with pytest.raises(ValueError) as error:
+    with pytest.raises(ValueError, match="'oops' is not a valid Python logging level"):
         configure_logger(logger, log_level_string="oops")
-    assert "'oops' is not a valid Python logging level" in str(error)
 
 
 def test_configure_logger_info_level_or_higher():
     logger = logging.getLogger(__name__)
     result = configure_logger(logger, log_level_string="info")
-    assert logger.getEffectiveLevel() == 20
+    assert logger.getEffectiveLevel() == 20  # noqa: PLR2004
     assert result == "Logger 'tests.test_config' configured with level=INFO"
 
 
 def test_configure_logger_debug_level_or_lower():
     logger = logging.getLogger(__name__)
     result = configure_logger(logger, log_level_string="DEBUG")
-    assert logger.getEffectiveLevel() == 10
+    assert logger.getEffectiveLevel() == 10  # noqa: PLR2004
     assert result == "Logger 'tests.test_config' configured with level=DEBUG"
 
 

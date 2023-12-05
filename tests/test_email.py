@@ -1,4 +1,5 @@
 from email.message import EmailMessage
+from http import HTTPStatus
 
 from ccslips.email import Email
 
@@ -43,4 +44,4 @@ def test_send_email():
         cc="cc_1@example.com,cc_2@example.com",
     )
     response = email.send()
-    assert response["ResponseMetadata"]["HTTPStatusCode"] == 200
+    assert response["ResponseMetadata"]["HTTPStatusCode"] == HTTPStatus.OK

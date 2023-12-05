@@ -6,9 +6,10 @@ import sentry_sdk
 
 def configure_logger(logger: logging.Logger, log_level_string: str) -> str:
     if log_level_string.upper() not in logging.getLevelNamesMapping():
-        raise ValueError(f"'{log_level_string}' is not a valid Python logging level")
+        message = f"'{log_level_string}' is not a valid Python logging level"
+        raise ValueError(message)
     log_level = logging.getLevelName(log_level_string.upper())
-    if log_level < 20:
+    if log_level < 20:  # noqa: PLR2004
         logging.basicConfig(
             format="%(asctime)s %(levelname)s %(name)s.%(funcName)s() line %(lineno)d: "
             "%(message)s"

@@ -5,7 +5,7 @@ from ccslips import polines as po
 
 def test_process_po_lines():
     result = list(po.process_po_lines("2023-01-02"))
-    assert len(result) == 2
+    assert len(result) == 2  # noqa: PLR2004
 
 
 def test_extract_credit_card_slip_data_all_fields_present(alma_client, po_line_records):

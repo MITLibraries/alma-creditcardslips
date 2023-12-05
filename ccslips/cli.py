@@ -1,8 +1,7 @@
+import datetime
 import logging
 import os
-from datetime import datetime, timedelta
 from time import perf_counter
-from typing import Optional
 
 import click
 
@@ -52,8 +51,8 @@ def main(
     ctx: click.Context,
     source_email: str,
     recipient_email: list[str],
-    date: Optional[str],
-    log_level: Optional[str],
+    date: str | None,
+    log_level: str | None,
 ) -> None:
     start_time = perf_counter()
     log_level = log_level or "INFO"
@@ -63,7 +62,9 @@ def main(
     logger.debug("Command called with options: %s", ctx.params)
 
     logger.info("Starting credit card slips process")
-    date = date or (datetime.today() - timedelta(days=2)).strftime("%Y-%m-%d")
+    date = date or (
+        datetime.datetime.now(tz=datetime.UTC) - datetime.timedelta(days=2)
+    ).strftime("%Y-%m-%d")
     credit_card_slips_data = process_po_lines(date)
     email_content = generate_credit_card_slips_html(credit_card_slips_data)
     email = Email()
@@ -90,5 +91,5 @@ def main(
         date,
         recipient_email,
         response["MessageId"],
-        str(timedelta(seconds=elapsed_time)),
+        str(datetime.timedelta(seconds=elapsed_time)),
     )

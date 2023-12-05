@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Generator, Optional
+from collections.abc import Generator
 from urllib.parse import urljoin
 
 import requests
@@ -39,7 +39,7 @@ class AlmaClient:
         self,
         endpoint: str,
         record_type: str,
-        params: Optional[dict] = None,
+        params: dict | None = None,
         limit: int = 100,
         _offset: int = 0,
         _records_retrieved: int = 0,
@@ -75,8 +75,7 @@ class AlmaClient:
         total_record_count = int(response.json()["total_record_count"])
         records = response.json().get(record_type, [])
         records_retrieved = _records_retrieved + len(records)
-        for record in records:
-            yield record
+        yield from records
         if records_retrieved < total_record_count:
             yield from self.get_paged(
                 endpoint,
@@ -88,10 +87,9 @@ class AlmaClient:
             )
 
     def get_brief_po_lines(
-        self, acquisition_method: Optional[str] = None
+        self, acquisition_method: str | None = None
     ) -> Generator[dict, None, None]:
-        """
-        Get brief PO line records, optionally filtered by acquisition_method.
+        """Get brief PO line records, optionally filtered by acquisition_method.
 
         The PO line records retrieved from this endpoint do not contain all of the PO
         line data and users may wish to retrieve the full PO line records with the
@@ -118,15 +116,13 @@ class AlmaClient:
 
     def get_full_po_lines(
         self,
-        acquisition_method: Optional[str] = None,
-        date: Optional[str] = None,
+        acquisition_method: str | None = None,
+        date: str | None = None,
     ) -> Generator[dict, None, None]:
         """Get full PO line records, optionally filtered by acquisition_method/date."""
         for line in self.get_brief_po_lines(acquisition_method):
             number = line["number"]
-            if date is None:
-                yield self.get_full_po_line(number)
-            elif line.get("created_date") == f"{date}Z":
+            if line.get("created_date") == f"{date}Z" or not date:
                 yield self.get_full_po_line(number)
 
     def get_fund_by_code(self, fund_code: str) -> dict:
