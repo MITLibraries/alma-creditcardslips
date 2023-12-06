@@ -12,7 +12,6 @@ sentry-sdk = "*"
 [dev-packages]
 black = "*"
 boto3-stubs = "*"
-coverage = "*"
 coveralls = "*"
 freezegun = "*"
 moto = "*"

@@ -69,11 +69,6 @@ publish-dev: dist-dev ## Build, tag and push (intended for developer-based manua
 	docker push $(ECR_URL_DEV):latest
 	docker push $(ECR_URL_DEV):`git describe --always`
 
-### If this is a Lambda repo, uncomment the two lines below     ###
-# update-lambda-dev: ## Updates the lambda with whatever is the most recent image in the ecr (intended for developer-based manual update)
-#	aws lambda update-function-code --function-name $(FUNCTION_DEV) --image-uri $(ECR_URL_DEV):latest
-
-
 ### Terraform-generated manual shortcuts for deploying to Stage. This requires  ###
 ###   that ECR_NAME_STAGE, ECR_URL_STAGE, and FUNCTION_STAGE environment        ###
 ###   variables are set locally by the developer and that the developer has     ###
@@ -89,10 +84,6 @@ publish-stage: ## Only use in an emergency
 	docker login -u AWS -p $$(aws ecr get-login-password --region us-east-1) $(ECR_URL_STAGE)
 	docker push $(ECR_URL_STAGE):latest
 	docker push $(ECR_URL_STAGE):`git describe --always`
-
-### If this is a Lambda repo, uncomment the two lines below     ###
-# update-lambda-stage: ## Updates the lambda with whatever is the most recent image in the ecr (intended for developer-based manual update)
-#	aws lambda update-function-code --function-name $(FUNCTION_STAGE) --image-uri $(ECR_URL_STAGE):latest
 
 run-dev: # Run in dev against Alma sandbox
 	aws ecs run-task --cluster alma-integrations-creditcardslips-ecs-dev --task-definition alma-integrations-creditcardslips-ecs-dev --launch-type="FARGATE" --network-configuration '{ "awsvpcConfiguration": {"subnets": ["subnet-0488e4996ddc8365b", "subnet-022e9ea19f5f93e65"],"securityGroups": ["sg-095372030a26c7753"],"assignPublicIp": "DISABLED"}}'
