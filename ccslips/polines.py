@@ -1,8 +1,8 @@
-import xml.etree.ElementTree as ET  # nosec B405
+from collections.abc import Generator, Iterator
 from copy import deepcopy
 from datetime import datetime
 from decimal import Decimal
-from typing import Generator, Iterator, Optional
+from xml.etree import ElementTree
 
 from ccslips.alma import AlmaClient
 
@@ -20,9 +20,11 @@ def extract_credit_card_slip_data(client: AlmaClient, po_line_record: dict) -> d
     The keys of the returned dict map to the appropriate element classes in the XML
     template used to generate a formatted slip.
     """
-    created_date = datetime.strptime(
-        po_line_record["created_date"], "%Y-%m-%dZ"
-    ).strftime("%y%m%d")
+    created_date = (
+        datetime.strptime(po_line_record["created_date"], "%Y-%m-%dZ")
+        .astimezone()
+        .strftime("%y%m%d")
+    )
     fund_distribution = po_line_record.get("fund_distribution", [])
     price = Decimal(po_line_record.get("price", {}).get("sum", "0.00"))
     title = po_line_record.get("resource_metadata", {}).get("title", "Unknown title")
@@ -47,7 +49,7 @@ def extract_credit_card_slip_data(client: AlmaClient, po_line_record: dict) -> d
     return po_line_data
 
 
-def get_cardholder_from_notes(notes: Optional[list[dict]]) -> str:
+def get_cardholder_from_notes(notes: list[dict] | None) -> str:
     """Get first note that begins with 'CC-' from a PO line record notes field."""
     if notes:
         for note in [n for n in notes if n.get("note_text", "").startswith("CC-")]:
@@ -55,7 +57,7 @@ def get_cardholder_from_notes(notes: Optional[list[dict]]) -> str:
     return "No cardholder note found"
 
 
-def get_quantity_from_locations(locations: Optional[list[dict]]) -> str:
+def get_quantity_from_locations(locations: list[dict] | None) -> str:
     """Get the total quantity of items associated with PO line locations.
 
     This function adds the quantities from each location in the PO line. This is an
@@ -87,9 +89,7 @@ def get_total_price_from_fund_distribution(
     )
 
 
-def get_account_data(
-    client: AlmaClient, fund_distribution: list[dict]
-) -> dict[str, str]:
+def get_account_data(client: AlmaClient, fund_distribution: list[dict]) -> dict[str, str]:
     """Get account information needed for a credit card slip.
 
     If the fund_distribution is empty, returns a single account with default text.
@@ -97,21 +97,21 @@ def get_account_data(
     """
     result = {"account_1": "No fund code found"}
     for count, fund in enumerate(fund_distribution, start=1):
-        if count == 3:
+        if count == 3:  # noqa: PLR2004
             break
         if account_number := get_account_number_from_fund(client, fund):
             result[f"account_{count}"] = account_number
     return result
 
 
-def get_account_number_from_fund(client: AlmaClient, fund: dict) -> Optional[str]:
+def get_account_number_from_fund(client: AlmaClient, fund: dict) -> str | None:
     """Get account number for a given fund.
 
     Returns None if fund has no fund code, fund record cannot be retrieved via fund
     code, or fund record does not contain an external_id field value.
     """
     account = None
-    if fund_code := fund.get("fund_code", {}).get("value"):
+    if fund_code := fund.get("fund_code", {}).get("value"):  # noqa: SIM102
         if fund_records := client.get_fund_by_code(fund_code).get("fund"):
             account = fund_records[0].get("external_id")
     return account
@@ -119,21 +119,21 @@ def get_account_number_from_fund(client: AlmaClient, fund: dict) -> Optional[str
 
 def generate_credit_card_slips_html(po_line_data: Iterator[dict]) -> str:
     """Create credit card slips HTML from a set of credit card slip data."""
-    template_tree = ET.parse("config/credit_card_slip_template.xml")  # nosec B314
+    template_tree = ElementTree.parse(  # noqa: S314
+        "config/credit_card_slip_template.xml"
+    )
     xml_template = template_tree.getroot()
-    output = ET.fromstring("<html></html>")  # nosec B314
+    output = ElementTree.fromstring("<html></html>")  # noqa: S314
     for line in po_line_data:
-        output.append(
-            populate_credit_card_slip_xml_fields(deepcopy(xml_template), line)
-        )
+        output.append(populate_credit_card_slip_xml_fields(deepcopy(xml_template), line))
     if len(output) == 0:
         return "<html><p>No credit card orders on this date</p></html>"
-    return ET.tostring(output, encoding="unicode", method="xml")
+    return ElementTree.tostring(output, encoding="unicode", method="xml")
 
 
 def populate_credit_card_slip_xml_fields(
-    credit_card_slip_xml_template: ET.Element, credit_card_slip_data: dict
-) -> ET.Element:
+    credit_card_slip_xml_template: ElementTree.Element, credit_card_slip_data: dict
+) -> ElementTree.Element:
     """Populate credit card slip XML template with data extracted from a PO line.
 
     The credit_card_slip_data keys must correspond to their associated element classes

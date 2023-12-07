@@ -9,7 +9,7 @@ def test_client_initializes_with_expected_values():
         "Accept": "application/json",
         "Content-Type": "application/json",
     }
-    assert client.timeout == 10
+    assert client.timeout == 10  # noqa: PLR2004
 
 
 def test_get_paged(alma_client):
@@ -18,7 +18,7 @@ def test_get_paged(alma_client):
         record_type="fake_records",
         limit=10,
     )
-    assert len(list(records)) == 15
+    assert len(list(records)) == 15  # noqa: PLR2004
 
 
 def test_get_brief_po_lines_without_acquisition_method(alma_client):
@@ -29,7 +29,7 @@ def test_get_brief_po_lines_without_acquisition_method(alma_client):
 
 def test_get_brief_po_lines_with_acquisition_method(alma_client):
     result = list(alma_client.get_brief_po_lines("PURCHASE_NOLETTER"))
-    assert len(result) == 3
+    assert len(result) == 3  # noqa: PLR2004
     assert result[0]["number"] == "POL-all-fields"
     assert result[1]["number"] == "POL-missing-fields"
     assert result[2]["number"] == "POL-wrong-date"
@@ -64,7 +64,7 @@ def test_get_full_po_lines_with_parameters(alma_client):
             acquisition_method="PURCHASE_NOLETTER", date="2023-01-02"
         )
     )
-    assert len(result) == 2
+    assert len(result) == 2  # noqa: PLR2004
     assert result[0]["number"] == "POL-all-fields"
     assert result[1]["number"] == "POL-missing-fields"
 
