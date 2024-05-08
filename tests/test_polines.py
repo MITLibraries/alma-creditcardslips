@@ -22,7 +22,8 @@ def test_extract_credit_card_slip_data_all_fields_present(alma_client, po_line_r
         "quantity": "3",
         "item_title": "Book title",
         "total_price": "$12.00",
-        "vendor_code": "Corporation",
+        "vendor_code": "CORP",
+        "vendor_name": "Corporation",
     }
 
 
@@ -40,6 +41,7 @@ def test_extract_credit_card_slip_data_missing_fields(alma_client, po_line_recor
         "item_title": "Unknown title",
         "total_price": "$0.00",
         "vendor_code": "No vendor found",
+        "vendor_name": "No vendor found",
     }
 
 
@@ -184,7 +186,8 @@ def test_generate_credit_card_slips_html_populates_all_fields():
             "quantity": "3",
             "item_title": "Book title",
             "total_price": "$12.00",
-            "vendor_code": "Corporation",
+            "vendor_code": "CORP",
+            "vendor_name": "Corporation",
         }
     ]
     assert (
@@ -213,9 +216,15 @@ def test_generate_credit_card_slips_html_populates_all_fields():
       <td />
     </tr>
     <tr>
+      <td align="left">Vendor name:
+      </td>
+      <td class="vendor_name" align="left">Corporation</td>
+      <td />
+    </tr>
+    <tr>
       <td align="left">Vendor code:
       </td>
-      <td class="vendor_code" align="left">Corporation</td>
+      <td class="vendor_code" align="left">CORP</td>
       <td />
     </tr>
     <tr>
