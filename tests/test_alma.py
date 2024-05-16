@@ -48,7 +48,8 @@ def test_get_full_po_line(alma_client):
         "number": "POL-all-fields",
         "price": {"sum": "12.0"},
         "resource_metadata": {"title": "Book title"},
-        "vendor_account": "Corporation",
+        "vendor_account": "CORP",
+        "vendor": {"value": "CORP", "desc": "Corporation"},
     }
 
 

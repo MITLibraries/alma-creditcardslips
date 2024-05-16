@@ -4,7 +4,7 @@ import boto3
 import pytest
 import requests_mock
 from click.testing import CliRunner
-from moto import mock_ses
+from moto import mock_aws
 
 from ccslips.alma import AlmaClient
 
@@ -136,7 +136,7 @@ def mocked_alma(fund_records, po_line_records):
 # AWS fixtures
 @pytest.fixture(autouse=True)
 def mocked_ses():
-    with mock_ses():
+    with mock_aws():
         ses = boto3.client("ses", region_name="us-east-1")
         ses.verify_email_identity(EmailAddress="from@example.com")
         yield ses

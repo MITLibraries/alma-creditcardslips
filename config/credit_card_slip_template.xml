@@ -22,6 +22,12 @@
       <td></td>
     </tr>
     <tr>
+      <td align="left">Vendor name:
+      </td>
+      <td class="vendor_name" align="left"></td>
+      <td></td>
+    </tr>
+    <tr>
       <td align="left">Vendor code:
       </td>
       <td class="vendor_code" align="left"></td>

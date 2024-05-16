@@ -42,7 +42,8 @@
         "resource_metadata": {
             "title": "Book title"
         },
-        "vendor_account": "Corporation"
+        "vendor_account": "CORP",
+        "vendor": {"value": "CORP", "desc": "Corporation"}
     },
     "missing_fields": {
         "acquisition_method": {

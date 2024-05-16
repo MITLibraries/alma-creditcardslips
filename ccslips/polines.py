@@ -43,6 +43,7 @@ def extract_credit_card_slip_data(client: AlmaClient, po_line_record: dict) -> d
             f"${get_total_price_from_fund_distribution(fund_distribution, price):.2f}"
         ),
         "vendor_code": po_line_record.get("vendor_account", "No vendor found"),
+        "vendor_name": po_line_record.get("vendor", {}).get("desc", "No vendor found"),
     }
     po_line_data.update(get_account_data(client, fund_distribution))
 
