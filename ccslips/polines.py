@@ -1,8 +1,8 @@
+import xml.etree.ElementTree as ET
 from collections.abc import Generator, Iterator
 from copy import deepcopy
 from datetime import datetime
 from decimal import Decimal
-from xml.etree import ElementTree
 
 from ccslips.alma import AlmaClient
 
@@ -120,21 +120,19 @@ def get_account_number_from_fund(client: AlmaClient, fund: dict) -> str | None:
 
 def generate_credit_card_slips_html(po_line_data: Iterator[dict]) -> str:
     """Create credit card slips HTML from a set of credit card slip data."""
-    template_tree = ElementTree.parse(  # noqa: S314
-        "config/credit_card_slip_template.xml"
-    )
+    template_tree = ET.parse("config/credit_card_slip_template.xml")  # noqa: S314
     xml_template = template_tree.getroot()
-    output = ElementTree.fromstring("<html></html>")  # noqa: S314
+    output = ET.fromstring("<html></html>")  # noqa: S314
     for line in po_line_data:
         output.append(populate_credit_card_slip_xml_fields(deepcopy(xml_template), line))
     if len(output) == 0:
         return "<html><p>No credit card orders on this date</p></html>"
-    return ElementTree.tostring(output, encoding="unicode", method="xml")
+    return ET.tostring(output, encoding="unicode", method="xml")
 
 
 def populate_credit_card_slip_xml_fields(
-    credit_card_slip_xml_template: ElementTree.Element, credit_card_slip_data: dict
-) -> ElementTree.Element:
+    credit_card_slip_xml_template: ET.Element, credit_card_slip_data: dict
+) -> ET.Element:
     """Populate credit card slip XML template with data extracted from a PO line.
 
     The credit_card_slip_data keys must correspond to their associated element classes
