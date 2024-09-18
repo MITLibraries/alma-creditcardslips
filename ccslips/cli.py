@@ -1,15 +1,16 @@
 import datetime
 import logging
-import os
 from time import perf_counter
 
 import click
 
-from ccslips.config import configure_logger, configure_sentry
+from ccslips.config import Config, configure_logger, configure_sentry
 from ccslips.email import Email
 from ccslips.polines import generate_credit_card_slips_html, process_po_lines
 
 logger = logging.getLogger(__name__)
+
+CONFIG = Config()
 
 
 @click.command()
@@ -36,15 +37,14 @@ logger = logging.getLogger(__name__)
     "--date",
     help=(
         "Optional date of exports to process, in 'YYYY-MM-DD' format. Defaults to "
-        "yesterday's date if not provided."
+        "two (2) days before the date the application is run."
     ),
 )
 @click.option(
-    "-l",
-    "--log-level",
-    envvar="LOG_LEVEL",
-    help="Case-insensitive Python log level to use, e.g. debug or warning. Defaults to "
-    "INFO if not provided or found in ENV.",
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Pass to set log level to DEBUG. Defaults to INFO.",
 )
 @click.pass_context
 def main(
@@ -52,32 +52,36 @@ def main(
     source_email: str,
     recipient_email: list[str],
     date: str | None,
-    log_level: str | None,
+    *,
+    verbose: bool,
 ) -> None:
     start_time = perf_counter()
-    log_level = log_level or "INFO"
     root_logger = logging.getLogger()
-    logger.info(configure_logger(root_logger, log_level))
+    logger.info(configure_logger(root_logger, verbose=verbose))
     logger.info(configure_sentry())
-    logger.debug("Command called with options: %s", ctx.params)
+    CONFIG.check_required_env_vars()
 
+    logger.debug("Command called with options: %s", ctx.params)
     logger.info("Starting credit card slips process")
-    date = date or (
+
+    # creation date of retrieved PO lines
+    created_date = date or (
         datetime.datetime.now(tz=datetime.UTC) - datetime.timedelta(days=2)
     ).strftime("%Y-%m-%d")
-    credit_card_slips_data = process_po_lines(date)
+
+    credit_card_slips_data = process_po_lines(created_date)
+
     email_content = generate_credit_card_slips_html(credit_card_slips_data)
     email = Email()
-    env = os.environ["WORKSPACE"]
-    subject_prefix = f"{env.upper()} " if env != "prod" else ""
+    subject_prefix = f"{CONFIG.WORKSPACE.upper()} " if CONFIG.WORKSPACE != "prod" else ""
     email.populate(
         from_address=source_email,
         to_addresses=",".join(recipient_email),
-        subject=f"{subject_prefix}Credit card slips {date}",
+        subject=f"{subject_prefix}Credit card slips {created_date}",
         attachments=[
             {
                 "content": email_content,
-                "filename": f"{date}_credit_card_slips.htm",
+                "filename": f"{created_date}_credit_card_slips.htm",
             }
         ],
     )
@@ -86,10 +90,8 @@ def main(
 
     elapsed_time = perf_counter() - start_time
     logger.info(
-        "Credit card slips processing complete for date %s. Email sent to recipient(s) "
-        "%s with SES message ID '%s'. Total time to complete process: %s",
-        date,
-        recipient_email,
-        response["MessageId"],
-        str(datetime.timedelta(seconds=elapsed_time)),
+        f"Credit card slips processing complete for date {created_date}. "
+        f"Email sent to recipient(s) {recipient_email} "
+        f"with SES message ID {response["MessageId"]}. "
+        f"Total time to complete process: {datetime.timedelta(seconds=elapsed_time)}"
     )

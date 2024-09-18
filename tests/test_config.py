@@ -2,26 +2,20 @@ import logging
 
 import pytest
 
-from ccslips.config import configure_logger, configure_sentry, load_alma_config
+from ccslips.config import configure_logger, configure_sentry
 
 
-def test_configure_logger_with_invalid_level_raises_error():
+def test_configure_logger_not_verbose():
     logger = logging.getLogger(__name__)
-    with pytest.raises(ValueError, match="'oops' is not a valid Python logging level"):
-        configure_logger(logger, log_level_string="oops")
-
-
-def test_configure_logger_info_level_or_higher():
-    logger = logging.getLogger(__name__)
-    result = configure_logger(logger, log_level_string="info")
-    assert logger.getEffectiveLevel() == 20  # noqa: PLR2004
+    result = configure_logger(logger, verbose=False)
+    assert logger.getEffectiveLevel() == logging.INFO
     assert result == "Logger 'tests.test_config' configured with level=INFO"
 
 
-def test_configure_logger_debug_level_or_lower():
+def test_configure_logger_verbose():
     logger = logging.getLogger(__name__)
-    result = configure_logger(logger, log_level_string="DEBUG")
-    assert logger.getEffectiveLevel() == 10  # noqa: PLR2004
+    result = configure_logger(logger, verbose=True)
+    assert logger.getEffectiveLevel() == logging.DEBUG
     assert result == "Logger 'tests.test_config' configured with level=DEBUG"
 
 
@@ -43,18 +37,22 @@ def test_configure_sentry_env_variable_is_dsn(monkeypatch):
     assert result == "Sentry DSN found, exceptions will be sent to Sentry with env=test"
 
 
-def test_load_alma_config_from_env():
-    assert load_alma_config() == {
-        "API_KEY": "just-for-testing",
-        "BASE_URL": "https://example.com",
-        "TIMEOUT": "10",
-    }
+def test_config_env_var_access_success(config_instance):
+    assert config_instance.WORKSPACE == "test"
 
 
-def test_load_alma_config_from_defaults(monkeypatch):
-    monkeypatch.delenv("ALMA_API_TIMEOUT", raising=False)
-    assert load_alma_config() == {
-        "API_KEY": "just-for-testing",
-        "BASE_URL": "https://example.com",
-        "TIMEOUT": "30",
-    }
+def test_config_env_var_access_error(config_instance):
+    with pytest.raises(
+        AttributeError, match="'DOES_NOT_EXIST' not a valid configuration variable"
+    ):
+        _ = config_instance.DOES_NOT_EXIST
+
+
+def test_config_check_required_env_vars_success(config_instance):
+    _ = config_instance.check_required_env_vars
+
+
+def test_config_check_required_env_vars_error(monkeypatch, config_instance):
+    monkeypatch.delenv("ALMA_API_URL")
+    with pytest.raises(OSError, match="Missing required environment variables"):
+        config_instance.check_required_env_vars()

@@ -7,6 +7,7 @@ from click.testing import CliRunner
 from moto import mock_aws
 
 from ccslips.alma import AlmaClient
+from ccslips.config import Config
 
 
 # Env fixtures
@@ -21,10 +22,11 @@ def _test_environment(monkeypatch):
     )
     monkeypatch.setenv("SENTRY_DSN", "None")
     monkeypatch.setenv("WORKSPACE", "test")
-    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "testing")
-    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "testing")
-    monkeypatch.setenv("AWS_SECURITY_TOKEN", "testing")
-    monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
+
+
+@pytest.fixture
+def config_instance() -> Config:
+    return Config()
 
 
 # CLI fixture
