@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from ccslips.config import load_alma_config
+from ccslips.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -24,16 +24,21 @@ class AlmaClient:
           {"total_record_count": 0} and these methods will return that object.
     """
 
-    def __init__(self) -> None:
-        """Initialize AlmaClient instance."""
-        alma_config = load_alma_config()
-        self.base_url = alma_config["BASE_URL"]
-        self.headers = {
-            "Authorization": f"apikey {alma_config['API_KEY']}",
+    @property
+    def base_url(self) -> str:
+        return Config().ALMA_API_URL
+
+    @property
+    def headers(self) -> dict:
+        return {
+            "Authorization": f"apikey {Config().ALMA_API_READ_KEY}",
             "Accept": "application/json",
             "Content-Type": "application/json",
         }
-        self.timeout = float(alma_config["TIMEOUT"])
+
+    @property
+    def timeout(self) -> float:
+        return float(Config().ALMA_API_TIMEOUT)
 
     def get_paged(
         self,

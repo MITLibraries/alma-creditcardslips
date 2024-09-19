@@ -30,8 +30,7 @@ def test_cli_all_options_passed(caplog, runner):
             "recipient2@example.com",
             "--date",
             "2023-01-02",
-            "--log-level",
-            "debug",
+            "--verbose",
         ],
     )
     assert result.exit_code == 0
@@ -39,7 +38,7 @@ def test_cli_all_options_passed(caplog, runner):
     assert (
         "Command called with options: {'source_email': 'from@example.com', "
         "'recipient_email': ('recipient1@example.com', 'recipient2@example.com'), "
-        "'date': '2023-01-02', 'log_level': 'debug'}" in caplog.text
+        "'date': '2023-01-02', 'verbose': True}" in caplog.text
     )
     assert (
         "Credit card slips processing complete for date 2023-01-02. Email sent to "

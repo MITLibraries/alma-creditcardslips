@@ -1,7 +1,7 @@
 from ccslips.alma import AlmaClient
 
 
-def test_client_initializes_with_expected_values():
+def test_client_initializes_with_expected_values(monkeypatch):
     client = AlmaClient()
     assert client.base_url == "https://example.com"
     assert client.headers == {
