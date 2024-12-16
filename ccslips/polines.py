@@ -28,7 +28,6 @@ def extract_credit_card_slip_data(client: AlmaClient, po_line_record: dict) -> d
     fund_distribution = po_line_record.get("fund_distribution", [])
     price = Decimal(po_line_record.get("price", {}).get("sum", "0.00"))
     title = po_line_record.get("resource_metadata", {}).get("title", "Unknown title")
-
     po_line_data = {
         "cardholder": get_cardholder_from_notes(po_line_record.get("note")),
         "invoice_number": (
@@ -81,13 +80,15 @@ def get_total_price_from_fund_distribution(
     If no amounts or amount sums are listed in the fund distribution, the unit price is
     returned as the total price.
     """
-    return (
-        sum(
-            Decimal(fund.get("amount", {}).get("sum", "0.00"))
-            for fund in fund_distribution
-        )
-        or unit_price
-    )
+    fund_amounts = []
+    for fund in fund_distribution:
+        fund_amount = fund.get("amount", {}).get("sum", "0.00")
+        # handle edge case where fund_distribution has funds with empty strings
+        if fund_amount == "":
+            fund_amount = "0.00"
+        fund_amounts.append(Decimal(fund_amount))
+
+    return sum(fund_amounts) or unit_price
 
 
 def get_account_data(client: AlmaClient, fund_distribution: list[dict]) -> dict[str, str]:
