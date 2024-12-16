@@ -95,6 +95,26 @@ def test_get_total_price_from_fund_distribution_no_amounts_or_sums_returns_unit_
     ) == Decimal("1.23")
 
 
+def test_get_total_price_from_fund_distribution_contains_empty_string_values():
+    price = Decimal("4.56")
+    fund_distribution = [
+        {
+            "amount": {
+                "currency": {},
+                "sum": "",
+            },
+            "fund_code": {
+                "desc": "",
+                "value": "",
+            },
+        },
+    ]
+    assert (
+        po.get_total_price_from_fund_distribution(fund_distribution, unit_price=price)
+        == price
+    )
+
+
 def test_get_total_price_from_fund_distribution_sums_fund_amounts():
     funds = [
         {"fund_code": {"value": "amount-is-zero"}, "amount": {"sum": "0.00"}},
