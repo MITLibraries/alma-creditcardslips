@@ -304,7 +304,7 @@ def test_generate_credit_card_slips_html_populates_all_fields():
       <td />
     </tr>
     <tr>
-      <td colspan="2">Date posted in SAP:</td>
+      <td colspan="2">SAP document date:</td>
       <td />
     </tr>
     <tr>
