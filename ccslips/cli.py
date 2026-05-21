@@ -92,6 +92,6 @@ def main(
     logger.info(
         f"Credit card slips processing complete for date {created_date}. "
         f"Email sent to recipient(s) {recipient_email} "
-        f"with SES message ID {response["MessageId"]}. "
+        f"with SES message ID {response['MessageId']}. "
         f"Total time to complete process: {datetime.timedelta(seconds=elapsed_time)}"
     )

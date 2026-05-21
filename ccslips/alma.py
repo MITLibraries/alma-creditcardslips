@@ -48,7 +48,7 @@ class AlmaClient:
         limit: int = 100,
         _offset: int = 0,
         _records_retrieved: int = 0,
-    ) -> Generator[dict, None, None]:
+    ) -> Generator[dict]:
         """Retrieve paginated results from the Alma API for a given endpoint.
 
         Args:
@@ -93,7 +93,7 @@ class AlmaClient:
 
     def get_brief_po_lines(
         self, acquisition_method: str | None = None
-    ) -> Generator[dict, None, None]:
+    ) -> Generator[dict]:
         """Get brief PO line records, optionally filtered by acquisition_method.
 
         The PO line records retrieved from this endpoint do not contain all of the PO
@@ -123,7 +123,7 @@ class AlmaClient:
         self,
         acquisition_method: str | None = None,
         date: str | None = None,
-    ) -> Generator[dict, None, None]:
+    ) -> Generator[dict]:
         """Get full PO line records, optionally filtered by acquisition_method/date."""
         for line in self.get_brief_po_lines(acquisition_method):
             number = line["number"]

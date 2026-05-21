@@ -1,5 +1,38 @@
-[tool.black]
-line-length = 90
+[project]
+name = "alma-creditcardslips"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "boto3",
+  "click",
+  "requests",
+  "sentry-sdk",
+]
+
+[project.scripts]
+ccslips = "ccslips.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ccslips*"]
+
+[dependency-groups]
+dev = [
+  "boto3-stubs",
+  "coveralls",
+  "freezegun",
+  "moto",
+  "mypy",
+  "pip-audit",
+  "pre-commit",
+  "pytest",
+  "requests-mock",
+  "ruff",
+  "types-requests",
+]
 
 [tool.mypy]
 disallow_untyped_calls = true
@@ -10,42 +43,30 @@ exclude = ["tests/"]
 log_level = "INFO"
 
 [tool.ruff]
-target-version = "py312"
-
-# set max line length
+target-version = "py313"
 line-length = 90
-
-# enumerate all fixed violations
 show-fixes = true
 
 [tool.ruff.lint]
 select = ["ALL", "PT"]
 
 ignore = [
-    # default
-    "ANN101", 
-    "ANN102", 
-    "COM812", 
-    "D107", 
-    "N812", 
-    "PTH", 
-
-    # project-specific
-    "C90",
-    "D100",
-    "D101", 
-    "D102",
-    "D103",
-    "D104", 
-    "G004",
-    "PLR0912",
-    "PLR0913", 
-    "PLR0915",
-    "S320",
-    "S321", 
+  "COM812",
+  "D107",
+  "N812",
+  "PTH",
+  "C90",
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "G004",
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+  "S321",
 ]
-
-# allow autofix behavior for specified rules
 fixable = ["E", "F", "I", "Q"]
 
 [tool.ruff.lint.flake8-annotations]
