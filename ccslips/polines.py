@@ -7,7 +7,7 @@ from decimal import Decimal
 from ccslips.alma import AlmaClient
 
 
-def process_po_lines(date: str) -> Generator[dict, None, None]:
+def process_po_lines(date: str) -> Generator[dict]:
     """Retrieve PO line records for a given date and yield processed data for each."""
     client = AlmaClient()
     for po_line in client.get_full_po_lines("PURCHASE_NOLETTER", date):

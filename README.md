@@ -22,7 +22,7 @@ This Python CLI application is run on a schedule as an Elastic Container Service
 - To update dependencies: `make update`
 - To run unit tests: `make test`
 - To lint the repo: `make lint`
-- To run the app: `pipenv run ccslips --help`
+- To run the app: `uv run ccslips --help`
 
 ## Environment Variables
 
