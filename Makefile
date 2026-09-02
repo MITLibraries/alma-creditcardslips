@@ -77,7 +77,7 @@ ccslips: # CLI without any arguments, utilizing uv script entrypoint
 	uv run ccslips
 
 run-dev: # Run in dev against Alma sandbox
-	aws ecs run-task --cluster alma-integrations-creditcardslips-ecs-dev --task-definition alma-integrations-creditcardslips-ecs-dev --launch-type="FARGATE" --network-configuration '{ "awsvpcConfiguration": {"subnets": ["subnet-0488e4996ddc8365b", "subnet-022e9ea19f5f93e65"],"securityGroups": ["sg-095372030a26c7753"],"assignPublicIp": "DISABLED"}}'
+	aws ecs run-task --cluster alma-integrations-creditcardslips-dev --propagate-tags="TASK_DEFINITION" --task-definition alma-integrations-creditcardslips-dev --launch-type="FARGATE" --network-configuration '{ "awsvpcConfiguration": {"subnets": ["subnet-0488e4996ddc8365b", "subnet-022e9ea19f5f93e65"],"securityGroups": ["sg-0bed145c45bf0a94b"],"assignPublicIp": "DISABLED"}}'
 
 ###############################################
 # Docker image, ECR, and Lambda Management
