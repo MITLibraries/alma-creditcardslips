@@ -52,6 +52,7 @@ select = ["ALL", "PT"]
 
 ignore = [
   "COM812",
+  "CPY001",
   "D107",
   "N812",
   "PTH",
@@ -65,6 +66,7 @@ ignore = [
   "PLR0912",
   "PLR0913",
   "PLR0915",
+  "PLR0917",
   "S321",
 ]
 fixable = ["E", "F", "I", "Q"]
