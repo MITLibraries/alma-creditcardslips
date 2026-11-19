@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import logging
 from time import perf_counter
 
@@ -65,9 +65,9 @@ def main(
     logger.info("Starting credit card slips process")
 
     # creation date of retrieved PO lines
-    created_date = date or (
-        datetime.datetime.now(tz=datetime.UTC) - datetime.timedelta(days=2)
-    ).strftime("%Y-%m-%d")
+    created_date = date or (dt.datetime.now(tz=dt.UTC) - dt.timedelta(days=2)).strftime(
+        "%Y-%m-%d"
+    )
 
     credit_card_slips_data = process_po_lines(created_date)
 
@@ -93,5 +93,5 @@ def main(
         f"Credit card slips processing complete for date {created_date}. "
         f"Email sent to recipient(s) {recipient_email} "
         f"with SES message ID {response['MessageId']}. "
-        f"Total time to complete process: {datetime.timedelta(seconds=elapsed_time)}"
+        f"Total time to complete process: {dt.timedelta(seconds=elapsed_time)}"
     )

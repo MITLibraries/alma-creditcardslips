@@ -9,11 +9,14 @@ ENV UV_SYSTEM_PYTHON=1
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock* ./
+COPY pyproject.toml uv.lock ./
 COPY ccslips ./ccslips
 COPY config ./config
 
-RUN uv pip install --system .
+RUN uv export --locked --no-dev --no-emit-project \
+        --format requirements.txt --output-file /tmp/requirements.txt && \
+    uv pip install --system --no-deps -r /tmp/requirements.txt && \
+    uv pip install --system --no-deps .
 
 ENTRYPOINT ["ccslips"]
 CMD []
